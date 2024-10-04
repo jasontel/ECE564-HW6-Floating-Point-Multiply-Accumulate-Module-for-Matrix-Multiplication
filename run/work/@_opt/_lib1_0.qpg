@@ -9,19 +9,19 @@ z2
 !i10e 25
 !i10f 100
 cModel Technology
-Z0 d/mnt/ncsudrive/t/tchen32/ECE564/HW6/attempt1/HW6 (1)/run
+Z0 d/mnt/ncsudrive/t/tchen32/ECE564/HW6/attempt1/HW6/run
 T_opt
-!s110 1728012239
-VL74Ml<C[XA<Hndm46PQ2J1
+!s110 1728070093
+V^30LJCfYNkWaADbaG@B8B0
 04 6 4 work tb_top fast 0
-=1-000ae431a4f1-66ff5fcd-dd60d-2e3ae9
+=1-000ae431a4f1-670041cb-f14c1-e91fa
 !s124 OEM100
 o-quiet -auto_acc_if_foreign -work work +acc
 Z1 tCvgOpt 0
 n@_opt
 OE;O;2021.2;73
 vDW_fp_add
-Z2 !s110 1728012156
+Z2 !s110 1728070054
 !i10b 1
 !s100 n@:mWCkjS1DPSnXl3SFTm2
 IONNO=G[[Wa3aOJNSS9b^?0
@@ -141,7 +141,7 @@ R6
 R1
 n@d@w_fp_cmp_@d@g
 vDW_fp_div
-Z9 !s110 1728012157
+R2
 !i10b 1
 !s100 lF^;@lQcRS`fLIi;MMjA=3
 I2lCY^_KVWCf8jmgC[g8YT0
@@ -221,7 +221,7 @@ R6
 R1
 n@d@w_fp_dp2
 vDW_fp_dp3
-R9
+R2
 !i10b 1
 !s100 3KUQDaXGMgb[i<^>[6UT`1
 IglWAfaKB`?;n8KZeMfOf?1
@@ -301,7 +301,7 @@ R6
 R1
 n@d@w_fp_exp2
 vDW_fp_flt2i
-R9
+R2
 !i10b 1
 !s100 nMnTfS9bjfb_@c85jTGKg2
 Il5Ej17PUM]1YogTZGJhJL1
@@ -401,7 +401,7 @@ R6
 R1
 n@d@w_fp_ln
 vDW_fp_log2
-R9
+R2
 !i10b 1
 !s100 C5f9D?3hNEaea6[JJ>gDl2
 I4924LDAN69FT=jU^Ddz7_0
@@ -441,7 +441,7 @@ R6
 R1
 n@d@w_fp_mac
 vDW_fp_mac_DG
-R9
+R2
 !i10b 1
 !s100 BND=SS_XAf@0S]>h@]BWm1
 I@IUz@ZzjnEQ:JfFE>jInY2
@@ -461,29 +461,29 @@ R6
 R1
 n@d@w_fp_mac_@d@g
 vDW_fp_mac_inst
-Z10 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-Z11 !s110 1728012168
+Z9 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+Z10 !s110 1728070056
 !i10b 1
-!s100 S>kUA1cUn697Y8X?3bg=l3
-IN3^U]oA03:M2]`O6E2_TL0
+!s100 Kb9L47L]d2cc0T:Y]bGKn3
+Io[lFzV<SRCU=NZQUR@ObD0
 S1
 R0
-Z12 w1728012100
-Z13 8../rtl/dut.sv
-Z14 F../rtl/dut.sv
-!i122 2
-L0 358 23
+Z11 w1728070030
+Z12 8../rtl/dut.sv
+Z13 F../rtl/dut.sv
+!i122 1
+L0 396 23
 R4
 R5
 r1
 !s85 0
 31
 !i113 0
-Z15 o-sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z14 o-sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R1
 n@d@w_fp_mac_inst
 vDW_fp_mult
-R9
+R2
 !i10b 1
 !s100 lH<mDMncAI9U:M=geEdO`0
 I43joeHN]n95W2d>O3Zk:>3
@@ -510,4 +510,6 @@ IA51hmEUbFGdT=?6zGC9RP0
 R0
 R7
 8/mnt/apps/public/COE/synopsys_apps/syn/T-2022.03-SP4/dw/sim_ver/DW_fp_mult_DG.v
-F/mnt/apps/public/COE/synopsys_apps/syn/T-2022.03-SP4/dw/sim_ver/DW_fp
+F/mnt/apps/public/COE/synopsys_apps/syn/T-2022.03-SP4/dw/sim_ver/DW_fp_mult_DG.v
+!i122 0
+L0 9

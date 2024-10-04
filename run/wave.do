@@ -4,10 +4,6 @@ log -r /tb_top/dut/*
 add wave -r /tb_top/dut/*
 
 quietly WaveActivateNextPane {} 0
-add wave -noupdate /tb_top/dut/reset_n
-add wave -noupdate /tb_top/dut/clk
-add wave -noupdate /tb_top/dut/dut_valid
-add wave -noupdate /tb_top/dut/dut_ready
 add wave -noupdate -color Cyan -itemcolor Cyan /tb_top/dut/dut__tb__sram_input_write_enable
 add wave -noupdate -color Cyan -itemcolor Cyan -radix decimal /tb_top/dut/dut__tb__sram_input_read_address
 add wave -noupdate -color Cyan -itemcolor Cyan -radix float32 /tb_top/dut/tb__dut__sram_input_read_data
@@ -23,31 +19,6 @@ add wave -noupdate -divider {Control signals}
 add wave -noupdate -radix float32 /tb_top/dut/accum_result
 add wave -noupdate /tb_top/dut/compute_phase
 add wave -noupdate /tb_top/dut/compute_complete
-add wave -noupdate /tb_top/dut/compute_complete_sys
-add wave -noupdate /tb_top/dut/get_array_size
-add wave -noupdate /tb_top/dut/result_write_complete
-add wave -noupdate /tb_top/dut/dut_ready_r
-add wave -noupdate /tb_top/dut/current_state_sys
-add wave -noupdate /tb_top/dut/next_state_sys
-add wave -noupdate /tb_top/dut/current_state_input
-add wave -noupdate /tb_top/dut/next_state_input
-add wave -noupdate /tb_top/dut/current_state_weight
-add wave -noupdate /tb_top/dut/next_state_weight
-add wave -noupdate /tb_top/dut/set_dut_ready
-add wave -noupdate /tb_top/dut/save_array_size
-add wave -noupdate /tb_top/dut/get_input_array_size
-add wave -noupdate /tb_top/dut/get_weight_array_size
-add wave -noupdate /tb_top/dut/read_addr_sel_input
-add wave -noupdate /tb_top/dut/read_addr_sel_weight
-add wave -noupdate /tb_top/dut/write_enable_sel_input
-add wave -noupdate /tb_top/dut/write_enable_sel_weight
-add wave -noupdate -radix decimal /tb_top/dut/input_array_num_of_rows
-add wave -noupdate -radix decimal /tb_top/dut/input_array_num_of_cols
-add wave -noupdate -radix decimal /tb_top/dut/weight_array_num_of_rows
-add wave -noupdate -radix decimal /tb_top/dut/weight_array_num_of_cols
-add wave -noupdate -radix decimal /tb_top/dut/num_of_weight_cols_traversed
-add wave -noupdate -radix decimal /tb_top/dut/num_of_weight_matrix_traversed
-add wave -noupdate -radix decimal /tb_top/dut/input_row_loopback_offset
 add wave -noupdate -divider FP_MAC
 add wave -noupdate -radix float32 /tb_top/dut/FP_MAC/inst_a
 add wave -noupdate -radix float32 /tb_top/dut/FP_MAC/inst_b

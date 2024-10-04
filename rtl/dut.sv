@@ -84,7 +84,7 @@ logic [31:0] read_addr_input,read_addr_weight,write_addr_result;
 logic write_en_reg;
 //assume input_col = weight row, no error checking
 logic [15:0] input_row,input_col,weight_row,weight_col;
-logic [31:0] write_counter,iter_counter;
+logic [31:0] write_counter,curr_row,col_counter;
 //dw
 logic [2 : 0] inst_rnd;
 
@@ -172,8 +172,8 @@ always @(*) begin : fsm_state_definition
     set_dut_ready   = 1'b0;
     read_addr_sel   = KEEP;
     write_addr_sel  = KEEP;
-    accu_flg        = 1'b1;
-    write_en_i      = 1'b1;
+    accu_flg        = 1'b0;
+    write_en_i      = 1'b0;
     get_matrix_dim  = 1'b0;
     keep_matrix_dim = 1'b1;
     next_state      = ITER_DONE;
@@ -185,7 +185,7 @@ always @(*) begin : fsm_state_definition
       read_addr_sel   = KEEP;
       write_addr_sel  = KEEP;
       accu_flg        = 1'b0;
-      write_en_i      = 1'b0;
+      write_en_i      = 1'b1; //debug
       get_matrix_dim  = 1'b0;
       keep_matrix_dim = 1'b1;
       next_state      = COMPLETE;
@@ -194,7 +194,7 @@ always @(*) begin : fsm_state_definition
       read_addr_sel   = KEEP;
       write_addr_sel  = write_first ? KEEP : INCREMENT;
       accu_flg        = 1'b0;
-      write_en_i      = 1'b0;
+      write_en_i      = 1'b1; //debug
       get_matrix_dim  = 1'b0;
       keep_matrix_dim = 1'b1;
       next_state      = READ_FIRST_DATA;
@@ -240,30 +240,63 @@ always @(posedge clk)begin
   if(!reset_n)begin
     read_addr_input   <= 0;
     read_addr_weight  <= 0;
-    iter_counter      <= 0;
+    curr_row      <= 0;
     read_iter_done    <= 0;
+    // col_counter       <= 0;
   end else begin
       if(read_addr_sel==SET_TO_ZERO_0 || read_addr_sel==SET_TO_ZERO_1)begin
         read_addr_input   <= 0;
         read_addr_weight  <= 0;
-        iter_counter      <= 0;
+        curr_row      <= 0;
+        // col_counter      <= 0;
         read_iter_done    <= 0;
       end
       else if(read_addr_sel == INCREMENT)begin
-        read_addr_input    <=  read_addr_input + 1;
-        read_addr_weight   <=  read_addr_weight + 1;
-        if(read_addr_input < input_col*(iter_counter+1))begin
-          iter_counter     <= iter_counter;
-          read_iter_done   <= 0;
-        end else begin
-          iter_counter     <= input_col!=0?iter_counter+1:0;
-          read_iter_done   <= input_col!=0?1:0;
-        end
         
-      end
-    //imply memory for KEEP
+        //move to next row of input start
+        if(curr_row < input_row)begin
+          // total_done <= 0;
+          //repeat for weight_col times start
+          if(read_addr_weight < weight_row*weight_col)begin
+            read_addr_weight <= read_addr_weight+1;
+            curr_row <= curr_row;
+            //1 iter start = iterate from 1 to input_col,col_counter++,iter_done and write
+            if(read_addr_input < input_col*(curr_row+1))begin
+              read_addr_input <= read_addr_input+1;
+              // col_counter     <= col_counter;
+              read_iter_done   <= 0;
+            end else begin
+              read_addr_input <= 1+(curr_row*input_col);
+              // col_counter <= col_counter+1;
+              read_iter_done   <= 1;
+            end
+            // 1 iter_end, 1 write
+          end else begin
+            //reset weight to first element_end
+            read_addr_weight <= 1;
+            //when finish first input_row job, move to next
+            curr_row <= (input_row!=0)?curr_row+1:0;
+            // col_counter <= 0;
+            read_addr_input <= 1+((curr_row+1)*input_col);
+            read_iter_done   <= 1;
+          end
+          //repeat for weight_col times_end
+
+        end else begin
+          
+        end
+        //move to next row of input 
+        
+        //input repeat (iterate from 1 to input_col,col_counter++,iter_done and write) for weight_col times(col_counter<weight_col)
+          //weight iterate from 1 to weight_row*weight_col
+        //intput move to next row(curr_row+1), weight move to 1(col_counter reset to 0), until curr_row reach input_row(curr_row < input_row)
+
+        end
+      //imply memory for KEEP
   end
 end
+        
+
 
 assign dut__tb__sram_result_write_data = write_data;
 //write data logic
@@ -275,12 +308,15 @@ always @(posedge clk)begin
   end
 end
 
-assign dut__tb__sram_result_write_enable  = write_en_reg;
+assign dut__tb__sram_result_write_enable  = write_en_reg; 
+
 assign dut__tb__sram_result_write_address = write_addr_result;
 
 //after first iteration, write_first become 0 so write addr start to increase
-assign write_first = (iter_counter <= input_col);
-assign total_done  = (write_counter == input_row*weight_col-1);
+//TODO: fix this logic as curr_row def change
+assign write_first = (curr_row==0 && read_addr_weight <=1+weight_row);
+// assign total_done  = (curr_row == input_row);
+assign total_done = (write_counter == input_row*weight_col);
 
 //write addr logic
 always @(posedge clk)begin
@@ -295,6 +331,8 @@ always @(posedge clk)begin
     else begin
       write_addr_result <= write_en_reg ? write_addr_result + 1:write_addr_result;
       write_counter     <= write_en_reg ? write_counter + 1: write_counter;
+
+
     end
   end
   //imply memory for KEEP
