@@ -15,7 +15,7 @@ build-dw:
 	/bin/bash -c "vlog ${DW_SRC} "	
 
 build:
-	/bin/bash -c "vlog -sv +incdir+$(COMMON_SRC) $(TESTBENCH_SRC) $(VERILOG_SRC)"	
+	/bin/bash -c "vlog -sv +define+DW_SUPPRESS_WARN +incdir+$(COMMON_SRC) $(TESTBENCH_SRC) $(VERILOG_SRC)"	
 
 eval: build
 	mkdir -p logs logs/test 

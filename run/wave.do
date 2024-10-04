@@ -1,4 +1,8 @@
 onerror {resume}
+
+log -r /tb_top/dut/*
+add wave -r /tb_top/dut/*
+
 quietly WaveActivateNextPane {} 0
 add wave -noupdate /tb_top/dut/reset_n
 add wave -noupdate /tb_top/dut/clk
