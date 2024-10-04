@@ -14,7 +14,16 @@
 #set the number of digits to be used for delay results
   set report_default_significant_digits 4
 
-  set CLK_PER $::env(CLOCK_PER)
+  # set CLK_PER $::env(CLOCK_PER)
+  # if { [info exists ::env(CLOCK_PER)] } {
+    set CLK_PER $::env(CLOCK_PER)
+# } else {
+    # puts "Environment variable CLOCK_PER is not set!"
+# }
+
+
+  # Initialize search_path and concatenate with testbench path
+  set search_path ""
 
   set search_path [concat $search_path ../testbench/]
 

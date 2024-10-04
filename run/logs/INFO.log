@@ -1,0 +1,23 @@
+# INFO: number of testcases:           4
+# INFO: DONE WITH RESETING DUT
+# INFO:LVL0: ######## Running Test: 1 ########
+# INFO: Reading memory file: ../inputs/test_1/test_1_input.dat
+# INFO: Reading memory file: ../inputs/test_1/test_1_weight.dat
+# INFO: ../inputs/test_1/test_1_result.dat
+# INFO:LVL0: ######## Running Test: 2 ########
+# INFO: Reading memory file: ../inputs/test_2/test_2_input.dat
+# INFO: Reading memory file: ../inputs/test_2/test_2_weight.dat
+# INFO: ../inputs/test_2/test_2_result.dat
+# INFO:LVL0: ######## Running Test: 3 ########
+# INFO: Reading memory file: ../inputs/test_3/test_3_input.dat
+# INFO: Reading memory file: ../inputs/test_3/test_3_weight.dat
+# INFO: ../inputs/test_3/test_3_result.dat
+# INFO:LVL0: ######## Running Test: 4 ########
+# INFO: Reading memory file: ../inputs/test_4/test_4_input.dat
+# INFO: Reading memory file: ../inputs/test_4/test_4_weight.dat
+# INFO: ../inputs/test_4/test_4_result.dat
+# INFO: Total number of cases       : 4
+# INFO: Total number of result pass : 256 / 256
+# INFO: Final pass percentage       : 100.00
+# INFO: Final Time Result           : 50520000 ns
+# INFO: Final Cycle Result          : 10104 cycles

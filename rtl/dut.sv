@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 // DUT - Mini project 
 //---------------------------------------------------------------------------
-`include "common.vh"
+`include "common/common.vh"
 
 module MyDesign(
 //---------------------------------------------------------------------------
@@ -82,9 +82,8 @@ logic [31:0] read_data_input,read_data_weight,write_data,accum_result,mac_result
 logic [31:0] read_addr_input,read_addr_weight,write_addr_result;
 //internal write enable signal
 logic write_en_reg;
-//assume input_col = weight row, no error checking
 logic [15:0] input_row,input_col,weight_row,weight_col;
-logic [31:0] write_counter,curr_row,col_counter;
+logic [31:0] write_counter,curr_row;
 //dw
 logic [2 : 0] inst_rnd;
 
@@ -100,6 +99,15 @@ always @(posedge clk or negedge reset_n) begin : fsm_state_transition
 end
 
 always @(*) begin : fsm_state_definition
+  //preset to avoid latch
+    set_dut_ready   = 1'b0;
+    read_addr_sel   = KEEP;
+    write_addr_sel  = KEEP;
+    accu_flg        = 1'b0;
+    write_en_i      = 1'b0;
+    get_matrix_dim  = 1'b0;
+    keep_matrix_dim = 1'b0;
+    next_state      = IDLE;
   case(state) 
   IDLE:begin
     if(dut_valid)begin
@@ -185,7 +193,7 @@ always @(*) begin : fsm_state_definition
       read_addr_sel   = KEEP;
       write_addr_sel  = KEEP;
       accu_flg        = 1'b0;
-      write_en_i      = 1'b1; //debug
+      write_en_i      = 1'b1; 
       get_matrix_dim  = 1'b0;
       keep_matrix_dim = 1'b1;
       next_state      = COMPLETE;
@@ -205,10 +213,10 @@ always @(*) begin : fsm_state_definition
     set_dut_ready   = 1'b1;
     read_addr_sel   = SET_TO_ZERO_0;
     write_addr_sel  = SET_TO_ZERO_0;
-    accu_flg        = 0'b1;
-    write_en_i      = 0'b0;
-    get_matrix_dim  = 0'b0;
-    keep_matrix_dim = 0'b1;
+    accu_flg        = 1'b1;
+    write_en_i      = 1'b0;
+    get_matrix_dim  = 1'b0;
+    keep_matrix_dim = 1'b1;
     next_state      = IDLE;
   end
 
@@ -218,7 +226,7 @@ end
 //dut_ready
 assign dut_ready = set_dut_ready;
 
-//read data logic
+//read data logic(seems redundant)
 always @(posedge clk)begin
   if(!reset_n)begin
     read_data_input   <= 0;
@@ -240,33 +248,30 @@ always @(posedge clk)begin
   if(!reset_n)begin
     read_addr_input   <= 0;
     read_addr_weight  <= 0;
-    curr_row      <= 0;
+    curr_row          <= 0;
     read_iter_done    <= 0;
-    // col_counter       <= 0;
   end else begin
       if(read_addr_sel==SET_TO_ZERO_0 || read_addr_sel==SET_TO_ZERO_1)begin
         read_addr_input   <= 0;
         read_addr_weight  <= 0;
-        curr_row      <= 0;
-        // col_counter      <= 0;
+        curr_row          <= 0;
         read_iter_done    <= 0;
       end
       else if(read_addr_sel == INCREMENT)begin
         
         //move to next row of input start
         if(curr_row < input_row)begin
-          // total_done <= 0;
           //repeat for weight_col times start
           if(read_addr_weight < weight_row*weight_col)begin
-            read_addr_weight <= read_addr_weight+1;
+            read_addr_weight   <= read_addr_weight+1;
             curr_row <= curr_row;
             //1 iter start = iterate from 1 to input_col,col_counter++,iter_done and write
             if(read_addr_input < input_col*(curr_row+1))begin
-              read_addr_input <= read_addr_input+1;
+              read_addr_input  <= read_addr_input+1;
               // col_counter     <= col_counter;
               read_iter_done   <= 0;
             end else begin
-              read_addr_input <= 1+(curr_row*input_col);
+              read_addr_input  <= 1+(curr_row*input_col);
               // col_counter <= col_counter+1;
               read_iter_done   <= 1;
             end
@@ -275,23 +280,16 @@ always @(posedge clk)begin
             //reset weight to first element_end
             read_addr_weight <= 1;
             //when finish first input_row job, move to next
-            curr_row <= (input_row!=0)?curr_row+1:0;
+            curr_row         <= (input_row!=0)?curr_row+1:0;
             // col_counter <= 0;
-            read_addr_input <= 1+((curr_row+1)*input_col);
+            read_addr_input  <= 1+((curr_row+1)*input_col);
             read_iter_done   <= 1;
           end
           //repeat for weight_col times_end
 
-        end else begin
-          
         end
         //move to next row of input 
-        
-        //input repeat (iterate from 1 to input_col,col_counter++,iter_done and write) for weight_col times(col_counter<weight_col)
-          //weight iterate from 1 to weight_row*weight_col
-        //intput move to next row(curr_row+1), weight move to 1(col_counter reset to 0), until curr_row reach input_row(curr_row < input_row)
-
-        end
+      end
       //imply memory for KEEP
   end
 end
@@ -309,30 +307,24 @@ always @(posedge clk)begin
 end
 
 assign dut__tb__sram_result_write_enable  = write_en_reg; 
-
 assign dut__tb__sram_result_write_address = write_addr_result;
-
 //after first iteration, write_first become 0 so write addr start to increase
-//TODO: fix this logic as curr_row def change
 assign write_first = (curr_row==0 && read_addr_weight <=1+weight_row);
-// assign total_done  = (curr_row == input_row);
 assign total_done = (write_counter == input_row*weight_col);
 
 //write addr logic
 always @(posedge clk)begin
   if(!reset_n)begin
-    write_addr_result   <= 0;
-    write_counter       <= 0;
+    write_addr_result     <= 0;
+    write_counter         <= 0;
   end else begin
     if(write_addr_sel == SET_TO_ZERO_0 || write_addr_sel == SET_TO_ZERO_1)begin
-      write_addr_result <= 0;
+      write_addr_result   <= 0;
       write_counter       <= 0;
     end
     else begin
-      write_addr_result <= write_en_reg ? write_addr_result + 1:write_addr_result;
-      write_counter     <= write_en_reg ? write_counter + 1: write_counter;
-
-
+      write_addr_result   <= write_en_reg ? write_addr_result + 1:write_addr_result;
+      write_counter       <= write_en_reg ? write_counter + 1: write_counter;
     end
   end
   //imply memory for KEEP
@@ -341,7 +333,7 @@ end
 //write en logic
 always @(posedge clk)begin
   if(!reset_n)begin
-    write_en_reg <= 0;
+    write_en_reg  <= 0;
   end else begin
     write_en_reg  <= write_en_i;
   end
