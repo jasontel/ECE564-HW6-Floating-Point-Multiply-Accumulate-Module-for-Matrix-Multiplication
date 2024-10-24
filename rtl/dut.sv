@@ -214,7 +214,7 @@ always @(*) begin : fsm_state_definition
     read_addr_sel   = SET_TO_ZERO_0;
     write_addr_sel  = SET_TO_ZERO_0;
     accu_flg        = 1'b1;
-    write_en_i      = 1'b0;
+    write_en_i      = 1'b0;//debug
     get_matrix_dim  = 1'b0;
     keep_matrix_dim = 1'b1;
     next_state      = IDLE;
@@ -361,7 +361,8 @@ always @(posedge clk)begin
   if(!reset_n)begin
     accum_result <= 0;
   end else begin
-    if(!total_done)begin
+    // if(!total_done)begin
+    if(!write_en_reg) begin
       accum_result <= accu_flg?mac_result_z:accum_result;
     end else begin
       accum_result <= 0;
